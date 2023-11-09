@@ -1,0 +1,38 @@
+﻿@page "/coloron"
+@inject IStringLocalizer<ColoronLocalization> Localizer
+
+<GameExit />
+<GameColoronContainer />
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        AppCenterService.TrackEvent("Game-Coloron", "JoinGame", "Joined");
+
+        HelperPath.Path = await Location.GetPathname();
+
+        await Task.Delay(DelayValue.Initialize);
+
+        await Include.StylesheetProtected("css/game/coloron/roboto.400-700-900.css", HelperPath.Path);
+        await Include.StylesheetProtected("css/game/coloron/font-awesome.min.css", HelperPath.Path);
+        await Include.StylesheetProtected("css/game/coloron/style.css", HelperPath.Path);
+
+        await Include.ScriptProtected("js/game/coloron/jquery.min.js", HelperPath.Path);
+
+        await Include.ScriptProtected("js/game/coloron/tweenmax.min.js", HelperPath.Path);
+
+        await GetRender();
+    }
+
+    private async Task GetRender()
+    {
+        await Task.Delay(DelayValue.Render);
+
+        await Include.ScriptProtected($"js/game/coloron/script{Device.KindTypeString}.js", HelperPath.Path);
+
+        await Task.Delay(DelayValue.Localization);
+
+        await Interop.Call("game.SetLocalization", Localizer["TweetText"].Value, Localizer["Point0"].Value, Localizer["Point5"].Value, Localizer["Point10"].Value, Localizer["Point13"].Value, Localizer["Point15"].Value, Localizer["Point20"].Value, Localizer["Point25"].Value, Localizer["Point30"].Value);
+    }
+}

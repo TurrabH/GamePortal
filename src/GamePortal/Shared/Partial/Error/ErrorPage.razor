@@ -1,0 +1,37 @@
+﻿@inject IStringLocalizer<ErrorLocalization> Localizer
+
+<div id="notfound">
+    <div class="notfound">
+        <div class="notfound-bg">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <h1>@Localizer["Title"]</h1>
+        <h2>@Localizer["Message"]</h2>
+        <a href="#" @onclick="(() => Redirect.Location())">@Localizer["Home"]</a>
+        @*<div class="notfound-social">
+            <a href="#"><i class="fa fa-facebook"></i></a>
+            <a href="#"><i class="fa fa-twitter"></i></a>
+            <a href="#"><i class="fa fa-pinterest"></i></a>
+            <a href="#"><i class="fa fa-google-plus"></i></a>
+        </div>*@
+    </div>
+</div>
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        AppCenterService.TrackEvent("Page-Error");
+
+        HelperPath.Path = await Location.GetPathname();
+
+        await Task.Delay(DelayValue.Initialize);
+
+        await Include.StylesheetProtected("css/error/quicksand.700.css", HelperPath.Path);
+
+        await Include.StylesheetProtected("css/error/font-awesome.min.css", HelperPath.Path);
+        await Include.StylesheetProtected("css/error/style.css", HelperPath.Path);
+    }
+}

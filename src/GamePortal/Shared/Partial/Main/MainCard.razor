@@ -1,0 +1,133 @@
+﻿@inject IStringLocalizer<MainLocalization> Localizer
+
+@if ((Game.Visibility && Game.Build == BuildEnum.Release && Game.Platform.Contains(AppValue.Platform)) || AppValue.Build == BuildEnum.Develop)
+{
+    <div class="col">
+        <div class="card text-center hover-shadow shadow-inner">
+            <div class="card-header">
+
+                <div id="@Game.Address-Star" style="display: none">
+                    <div id="full-stars-example">
+                        <div class="rating-group">
+                            <input class="rating__input rating__input--none" name="rating-@Game.Address" id="rating-none-@Game.Address" value="0" type="radio" @onclick="(() => Set(Game.Address, Game.Title, 0))">
+                            <label aria-label="No rating" class="rating__label" for="rating-none-@Game.Address"><i class="rating__icon rating__icon--none fa fa-ban"></i></label>
+
+                            <label aria-label="1 star" class="rating__label" for="rating-1-@Game.Address"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                            <input class="rating__input" name="rating-@Game.Address" id="rating-1-@Game.Address" value="1" type="radio" @onclick="(() => Set(Game.Address, Game.Title, 1))">
+
+                            <label aria-label="2 stars" class="rating__label" for="rating-2-@Game.Address"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                            <input class="rating__input" name="rating-@Game.Address" id="rating-2-@Game.Address" value="2" type="radio" @onclick="(() => Set(Game.Address, Game.Title, 2))">
+
+                            <label aria-label="3 stars" class="rating__label" for="rating-3-@Game.Address"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                            <input class="rating__input" name="rating-@Game.Address" id="rating-3-@Game.Address" value="3" type="radio" @onclick="(() => Set(Game.Address, Game.Title, 3))">
+
+                            <label aria-label="4 stars" class="rating__label" for="rating-4-@Game.Address"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                            <input class="rating__input" name="rating-@Game.Address" id="rating-4-@Game.Address" value="4" type="radio" @onclick="(() => Set(Game.Address, Game.Title, 4))">
+
+                            <label aria-label="5 stars" class="rating__label" for="rating-5-@Game.Address"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                            <input class="rating__input" name="rating-@Game.Address" id="rating-5-@Game.Address" value="5" type="radio" @onclick="(() => Set(Game.Address, Game.Title, 5))">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="@Game.Address-Play" style="display: none" class="text-danger">@Localizer["PlayFirst"]</div>
+                
+            </div>
+            <div class="bg-image hover-zoom hover-overlay ripple" data-mdb-ripple-color="dark">
+                <img src="@Localizer[$"Image{Game.Title}"]" class="img-fluid" />
+                <a @onclick="(() => Redirect.Location(Game.Address))" style="cursor: pointer">
+                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                </a>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@Localizer[$"Title{Game.Title}"]</h5>
+                <p class="card-text">@Localizer[$"Description{Game.Title}"]</p>
+                <a @onclick="(() => Redirect.Location(Game.Address))" class="btn btn-danger">@Localizer["PlayGame"]</a>
+                @if (Game.State != null)
+                {
+                    <span class="badge rounded-pill badge-notification bg-warning">@Localizer[$"State{Game.State}"]</span>
+                }
+            </div>
+            <div class="card-footer text-muted">@Types(Game.Type)</div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public GameStruct Game { get; set; }
+
+    private string Types(GameTypeEnum[] Types)
+    {
+        bool First = true;
+        string Text = string.Empty;
+
+        foreach (GameTypeEnum Type in Types)
+        {
+            if (First)
+            {
+                First = false;
+                Text = Localizer[$"Type{Type}"];
+            }
+            else
+            {
+                Text += $", {Localizer[$"Type{Type}"]}";
+            }
+        }
+
+        return Text;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        foreach (GameStruct Game in GameValue.Games.Values)
+        {
+            if ((Game.Visibility && Game.Build == BuildEnum.Release && Game.Platform.Contains(AppValue.Platform)) || AppValue.Build == BuildEnum.Develop)
+            {
+                bool Rating = await Local.Check(Game.Address);
+
+                if (Rating)
+                {
+                    await Style.Remove($"{Game.Address}-Star", "display");
+
+                    Rating = await Local.Check($"{Game.Address}-rating");
+
+                    if (Rating)
+                    {
+                        string Star = await Local.Get($"{Game.Address}-rating");
+
+                        if (!string.IsNullOrEmpty(Star) && Star != "0")
+                        {
+                            await Taiizor.Essentials.Blazor.Extension.Attribute.Set($"rating-{Star}-{Game.Address}", "checked");
+                        }
+                        else
+                        {
+                            await Taiizor.Essentials.Blazor.Extension.Attribute.Set($"rating-none-{Game.Address}", "checked");
+                        }
+                    }
+                    else
+                    {
+                        await Taiizor.Essentials.Blazor.Extension.Attribute.Set($"rating-none-{Game.Address}", "checked");
+                    }
+                }
+                else
+                {
+                    await Style.Remove($"{Game.Address}-Play", "display");
+                }
+            }
+        }
+    }
+
+    private async void Set(string Address, string Title, int Star)
+    {
+        string Key = $"{Address}-rating";
+        string Value = $"{Star}";
+
+        if (!await Local.Check(Key, Value))
+        {
+            await Local.Set(Key, Value);
+
+            AppCenterService.TrackEvent($"Game-{Title}", "Rating", $"{Star} Star");
+        }
+    }
+}

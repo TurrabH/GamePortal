@@ -1,0 +1,25 @@
+﻿@inject IJSRuntime JS
+@inherits LayoutComponentBase
+
+<CustomErrorBoundary>
+    <ChildContent>
+        @Body
+    </ChildContent>
+    @*<ErrorContent Context="Exception">
+        <p>
+            @Exception.Message
+        </p>
+        <p>
+            @Exception.StackTrace
+        </p>
+    </ErrorContent>*@
+</CustomErrorBoundary>
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _ = new Interop(JS, General.Javascript);
+    }
+}

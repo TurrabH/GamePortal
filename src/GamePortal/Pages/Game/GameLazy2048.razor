@@ -1,0 +1,26 @@
+﻿@page "/lazy2048"
+
+<GameLazy2048Container />
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        AppCenterService.TrackEvent("Game-Lazy2048", "JoinGame", "Joined");
+
+        HelperPath.Path = await Location.GetPathname();
+
+        await Task.Delay(DelayValue.Initialize);
+
+        await Include.StylesheetProtected("css/game/lazy2048/style.css", HelperPath.Path);
+        
+        await GetRender();
+    }
+
+    private async Task GetRender()
+    {
+        await Task.Delay(DelayValue.Render);
+        
+        await Include.ScriptProtected("js/game/lazy2048/script.js", HelperPath.Path);
+    }
+}

@@ -1,0 +1,34 @@
+﻿@page "/classic2048"
+
+<GameClassic2048Paper />
+
+<GameClassic2048Template />
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        AppCenterService.TrackEvent("Game-Classic2048", "JoinGame", "Joined");
+
+        HelperPath.Path = await Location.GetPathname();
+
+        await Task.Delay(DelayValue.Initialize);
+        
+        await Include.StylesheetProtected("css/game/classic2048/rubik.300-700.css", HelperPath.Path);
+        await Include.StylesheetProtected("css/game/classic2048/normalize.min.css", HelperPath.Path);
+        await Include.StylesheetProtected("css/game/classic2048/style.css", HelperPath.Path);
+
+        await Include.ScriptProtected("js/game/classic2048/jquery.js", HelperPath.Path);
+
+        await GetRender();
+    }
+    
+    private async Task GetRender()
+    {
+        await Task.Delay(DelayValue.Render);
+
+        await Include.ScriptProtected("js/game/classic2048/lodash.js", HelperPath.Path);
+        await Include.ScriptProtected("js/game/classic2048/hammer.js", HelperPath.Path);
+        await Include.ScriptProtected("js/game/classic2048/script.js", HelperPath.Path);
+    }
+}

@@ -1,0 +1,273 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFrameworks>net8.0-android</TargetFrameworks>
+        <!--<TargetFrameworks>$(TargetFrameworks);net8.0-ios;net8.0-maccatalyst</TargetFrameworks>-->
+
+        <!-- Targets possible from Windows OS -->
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+
+        <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+        <!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
+
+        <!-- .NET MAUI -->
+        <UseMaui>true</UseMaui>
+        <SingleProject>true</SingleProject>
+        <EnableDefaultCssItems>false</EnableDefaultCssItems>
+        <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+
+        <!-- Project Property -->
+        <OutputType>Exe</OutputType>
+        <LangVersion>preview</LangVersion>
+        <AnalysisLevel>preview</AnalysisLevel>
+        <PublisherName>Taiizor</PublisherName>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DefaultLanguage>en-GB</DefaultLanguage>
+        <RootNamespace>GamePortal</RootNamespace>
+
+        <!-- Project Profiles -->
+        <!--<WindowsPackageType Condition="$(TargetFramework.Contains('-windows'))">None</WindowsPackageType>-->
+
+        <!-- Display Name -->
+        <ApplicationTitle>Soferity: Game Portal</ApplicationTitle>
+
+        <!-- App Identifier -->
+        <ApplicationId>com.soferity.gameportal</ApplicationId>
+        <ApplicationIdGuid>5482B078-A108-4D06-A2E0-08EB73226549</ApplicationIdGuid>
+
+        <!-- Versions -->
+        <Version>1.1.0</Version>
+        <FileVersion>$(Version)</FileVersion>
+        <PackageVersion>$(Version)</PackageVersion>
+        <AssemblyVersion>$(Version)</AssemblyVersion>
+        <AssemblyFileVersion>$(Version)</AssemblyFileVersion>
+        <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
+
+        <ApplicationVersion Condition="$(TargetFramework.Contains('-ios'))">1</ApplicationVersion>
+        <ApplicationVersion Condition="$(TargetFramework.Contains('-maccatalyst'))">1</ApplicationVersion>
+        <ApplicationVersion Condition="$(TargetFramework.Contains('-android'))">1</ApplicationVersion>
+        <ApplicationVersion Condition="$(TargetFramework.Contains('-windows'))">0</ApplicationVersion>
+        <ApplicationVersion Condition="$(TargetFramework.Contains('-tizen'))">1</ApplicationVersion>
+
+        <!-- Target Platform Options -->
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+
+        <!-- Minimum Target OS Version for Windows Platform -->
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$(TargetFramework.Contains('-maccatalyst')) and '$(Configuration)' == 'Release'">
+        <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers>
+        <!--<RuntimeIdentifiers>osx-x64;osx-arm64</RuntimeIdentifiers>-->
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$(TargetFramework.Contains('-windows')) and '$(Configuration)' == 'Release'">
+        <!--<RuntimeIdentifiers>win-x64;win-x86;win-arm;win-arm64;</RuntimeIdentifiers>-->
+        <GenerateAppxPackageOnBuild>True</GenerateAppxPackageOnBuild>
+        <!--<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+        <PackageCertificateThumbprint>A3CB5279FC1E683A1B2364E52E8F3D28FF1D80BA</PackageCertificateThumbprint>
+        <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>-->
+        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+        <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+        <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+        <GenerateTestArtifacts>True</GenerateTestArtifacts>
+        <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+        <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
+        <AndroidPackageFormat>aab</AndroidPackageFormat>
+        <AndroidKeyStore>True</AndroidKeyStore>
+        <AndroidSigningKeyStore>..\Soferity.keystore</AndroidSigningKeyStore>
+        <AndroidSigningKeyAlias>GamePortal</AndroidSigningKeyAlias>
+        <AndroidSigningKeyPass>yje3vWZoIvWPRxp</AndroidSigningKeyPass>
+        <AndroidSigningStorePass>yje3vWZoIvWPRxp</AndroidSigningStorePass>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$(TargetFramework.Contains('-linux')) and '$(Configuration)' == 'Release'">
+        <RuntimeIdentifiers>linux-x64;linux-musl-x64;linux-arm;linux-arm64;rhel-x64;</RuntimeIdentifiers>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$(TargetFramework.Contains('-tizen')) and '$(Configuration)' == 'Release'">
+        <RuntimeIdentifier>tizen</RuntimeIdentifier>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="$(TargetFramework.Contains('-ios')) and '$(Configuration)' == 'Release'">
+        <RuntimeIdentifiers>ios-arm;ios-arm64</RuntimeIdentifiers>
+        <CodesignKey>iPhone Distribution: Soferity (AY2GDE9QM7)</CodesignKey>
+        <CodesignProvision>GamePortal</CodesignProvision>
+        <ArchiveOnBuild>true</ArchiveOnBuild>
+        <TcpPort>58181</TcpPort>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- App Icon -->
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#1B1B29" />
+
+        <!-- Splash Screen -->
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#1B1B29" Resize="true" BaseSize="384,384" />
+
+        <!-- Images -->
+        <MauiImage Include="Resources\Images\*" />
+        <MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
+
+        <!-- Custom Fonts -->
+        <MauiFont Include="Resources\Fonts\*" />
+
+        <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\Raw\AppCenter.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Resources\Languages\Error\ErrorLocalization.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>ErrorLocalization.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Languages\Game\Classic2048\Classic2048Localization.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>Classic2048Localization.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Languages\Game\Coloron\ColoronLocalization.Designer.cs">
+          <DependentUpon>ColoronLocalization.resx</DependentUpon>
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+        </Compile>
+        <Compile Update="Resources\Languages\Game\Lazy2048\Lazy2048Localization.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>Lazy2048Localization.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Languages\Game\MagicSquare\MagicSquareLocalization.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>MagicSquareLocalization.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Languages\Game\Menja\MenjaLocalization.Designer.cs">
+          <DependentUpon>MenjaLocalization.resx</DependentUpon>
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+        </Compile>
+        <Compile Update="Resources\Languages\Game\SweetMemory\SweetMemoryLocalization.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>SweetMemoryLocalization.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Languages\Game\TheAviator\TheAviatorLocalization.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>TheAviatorLocalization.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Languages\Game\TheCube\TheCubeLocalization.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>TheCubeLocalization.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Languages\Game\TowerBlock\TowerBlockLocalization.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>TowerBlockLocalization.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Languages\Game\TowerOfHanoi\TowerOfHanoiLocalization.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>TowerOfHanoiLocalization.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Languages\Game\ValorousRabbit\ValorousRabbitLocalization.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>ValorousRabbitLocalization.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Languages\Localization.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Localization.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Resources\Languages\Main\MainLocalization.Designer.cs">
+          <DesignTime>True</DesignTime>
+          <AutoGen>True</AutoGen>
+          <DependentUpon>MainLocalization.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Resources\Languages\Error\ErrorLocalization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>ErrorLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Game\Classic2048\Classic2048Localization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>Classic2048Localization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Game\Coloron\ColoronLocalization.resx">
+          <LastGenOutput>ColoronLocalization.Designer.cs</LastGenOutput>
+          <Generator>ResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Game\Lazy2048\Lazy2048Localization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>Lazy2048Localization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Game\MagicSquare\MagicSquareLocalization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>MagicSquareLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Game\Menja\MenjaLocalization.resx">
+          <LastGenOutput>MenjaLocalization.Designer.cs</LastGenOutput>
+          <Generator>ResXFileCodeGenerator</Generator>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Game\SweetMemory\SweetMemoryLocalization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>SweetMemoryLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Game\TheAviator\TheAviatorLocalization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>TheAviatorLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Game\TheCube\TheCubeLocalization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>TheCubeLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Game\TowerBlock\TowerBlockLocalization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>TowerBlockLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Game\TowerOfHanoi\TowerOfHanoiLocalization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>TowerOfHanoiLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Game\ValorousRabbit\ValorousRabbitLocalization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>ValorousRabbitLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Localization.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Localization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Languages\Main\MainLocalization.resx">
+          <Generator>ResXFileCodeGenerator</Generator>
+          <LastGenOutput>MainLocalization.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25936-preview" />
+        <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.0-rc.2.23480.2" />
+        <PackageReference Update="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.0-rc.2.9530" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Taiizor.Essentials.Maui" Version="23.2.23.500" />
+        <PackageReference Include="Taiizor.Essentials.Blazor" Version="23.2.23.455" />
+        <PackageReference Include="Taiizor.Essentials.Maui.AppCenter" Version="23.2.23.500" />
+    </ItemGroup>
+
+</Project>

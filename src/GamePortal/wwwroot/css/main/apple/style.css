@@ -1,0 +1,31 @@
+body{
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow:hidden;
+}
+
+.wrapper {
+    display: table;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    overflow: hidden;
+}
+
+canvas{
+  position: relative;
+  height:100%;
+  top: 0;
+  width:100%;
+  z-index: 1;
+}
+
+.introduction-canvas--overflow{
+  width:100%;
+  height:100%;
+  position:absolute;
+  top: 0;
+  display:block;
+  background: linear-gradient(to right bottom,rgba(41,8,48,0.95) 0,rgba(82,65,143,0.95) 50%,rgba(114,183,227,0.95) 100%);
+}

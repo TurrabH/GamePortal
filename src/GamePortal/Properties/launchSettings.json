@@ -1,0 +1,12 @@
+{
+    "profiles": {
+        "GamePortal (Package)": {
+            "commandName": "MsixPackage",
+            "nativeDebugging": false
+        },
+        "GamePortal (Unpackaged)": {
+            "commandName": "Project",
+            "nativeDebugging": false
+        }
+    }
+}

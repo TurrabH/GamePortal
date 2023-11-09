@@ -1,0 +1,64 @@
+﻿@if (AppValue.Platform == PlatformEnum.MacCatalyst || AppValue.Platform == PlatformEnum.iOS)
+{
+    <div class="wrapper">
+        <canvas id="introduction-canvas"></canvas>
+        <div class="introduction-canvas--overflow"></div>
+    </div>
+}
+else if (AppValue.Platform == PlatformEnum.Android)
+{
+    <div id="particle"></div>
+}
+else
+{
+    <div id="world"></div>
+}
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        HelperPath.Path = await Location.GetPathname();
+        
+        if (AppValue.Platform == PlatformEnum.MacCatalyst || AppValue.Platform == PlatformEnum.iOS)
+        {
+            await Include.StylesheetProtected("css/main/apple/style.css", HelperPath.Path);
+            
+            await Include.ScriptProtected("js/main/apple/script.js", HelperPath.Path);
+        }
+        else if (AppValue.Platform == PlatformEnum.Android)
+        {
+            await Include.StylesheetProtected("css/main/android/styles.css", HelperPath.Path);
+            
+            await Include.ScriptProtected("js/main/android/jquery.min.js", HelperPath.Path);
+        }
+        else
+        {
+            await Include.StylesheetProtected("css/main/winui/custom.css", HelperPath.Path);
+            
+            await Include.ScriptProtected("js/main/winui/three.min.js", HelperPath.Path);
+        }
+
+        await GetRender();
+    }
+    
+    private async Task GetRender()
+    {
+        await Task.Delay(DelayValue.Render);
+        
+        if (AppValue.Platform == PlatformEnum.MacCatalyst || AppValue.Platform == PlatformEnum.iOS)
+        {
+            //
+        }
+        else if (AppValue.Platform == PlatformEnum.Android)
+        {
+
+            await Include.ScriptProtected("js/main/android/script.js", HelperPath.Path);
+        }
+        else
+        {
+            await Include.ScriptProtected("js/main/winui/orbitcontrols.js", HelperPath.Path);
+            await Include.ScriptProtected("js/main/winui/custom.js", HelperPath.Path);
+        }
+    }
+}

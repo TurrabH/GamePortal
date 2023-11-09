@@ -1,0 +1,39 @@
+﻿@page "/"
+
+<MainBackground />
+
+<MainContainer />
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        AppCenterService.TrackEvent("Page-Main");
+
+        await Include.Font("css/main/font-awesome.css");
+
+        await Include.Stylesheet("css/main/roboto.300-900.css");
+
+        await Include.Stylesheet("css/main/mdb.dark.min.css");
+        await Include.Stylesheet("css/main/stars.css");
+
+        await Include.Script("js/main/mdb.min.js");
+
+        await GetLocalization();
+    }
+
+    private async Task GetLocalization()
+    {
+        CultureInfo Current = Culture.Get(GetCultureEnum.Culture);
+
+        string Key = "Display-Localization";
+        string Value = $"{Current.Name}-{Current.DisplayName}";
+
+        if (!await Local.Check(Key, Value))
+        {
+            await Local.Set(Key, Value);
+
+            AppCenterService.TrackEvent(Key, Current.Name, Current.DisplayName);
+        }
+    }
+}
